@@ -65,6 +65,9 @@ namespace SMK_Restaurant_API.Controllers
 
             if (request.Photo != null)
             {
+                if (!IsValidImage(request.Photo))
+                    return BadRequest("Invalid image. Must be .jpg, .jpeg, .png and max 2MB.");
+
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(request.Photo.FileName);
                 var savePath = Path.Combine("wwwroot/images", fileName);
 
@@ -103,6 +106,9 @@ namespace SMK_Restaurant_API.Controllers
 
             if (request.Photo != null)
             {
+                if (!IsValidImage(request.Photo))
+                    return BadRequest("Invalid image. Must be .jpg, .jpeg, .png and max 2MB.");
+
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(request.Photo.FileName);
                 var savePath = Path.Combine("wwwroot/images", fileName);
 
@@ -133,6 +139,17 @@ namespace SMK_Restaurant_API.Controllers
             await _context.SaveChangesAsync();
             return Ok("Review deleted.");
         }
+
+        private bool IsValidImage(IFormFile file)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var maxFileSize = 2 * 1024 * 1024; // 2MB
+
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            return file.Length <= maxFileSize && allowedExtensions.Contains(extension);
+        }
+
 
     }
 }
