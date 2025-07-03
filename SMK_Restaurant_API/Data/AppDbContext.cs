@@ -7,15 +7,15 @@ namespace SMK_Restaurant_API.Data
     {
         public AppDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Msmember> Msmembers { get; set; }
-        public DbSet<Msmenu> Msmenus { get; set; }
+        public DbSet<Msmember> Msmember { get; set; }
+        public DbSet<Msmenu> Msmenu { get; set; }
 
-        public DbSet<Headerorder> Headerorders { get; set; }
+        public DbSet<Headerorder> Headerorder { get; set; }
 
-        public DbSet<Review> Reviews { get; set; }
-        public DbSet<PartyPackage> PartyPackages { get; set; }
-        public DbSet<PartyPackageDetail> PartyPackageDetails { get; set; }
-        public DbSet<OrderPackage> OrderPackages { get; set; }
+        public DbSet<Review> Review { get; set; }
+        public DbSet<PartyPackage> PartyPackage { get; set; }
+        public DbSet<PartyPackageDetail> PartyPackageDetail { get; set; }
+        public DbSet<OrderPackage> OrderPackage { get; set; }
     }
 
 }

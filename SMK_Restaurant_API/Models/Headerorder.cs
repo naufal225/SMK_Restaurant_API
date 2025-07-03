@@ -14,7 +14,7 @@ namespace SMK_Restaurant_API.Models
         public string MemberID { get; set;} = string.Empty ;
 
         [Required]
-        public string Date {  get; set; } = string.Empty ;
+        public DateOnly? Date {  get; set; } 
 
 
         [Required]

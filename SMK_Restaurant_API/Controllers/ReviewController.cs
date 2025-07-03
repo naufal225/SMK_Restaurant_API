@@ -25,7 +25,7 @@ namespace SMK_Restaurant_API.Controllers
         [AllowAnonymous] // Boleh diakses tanpa login
         public async Task<IActionResult> GetAll()
         {
-            var reviews = await _context.Reviews.ToListAsync();
+            var reviews = await _context.Review.ToListAsync();
             return Ok(reviews);
         }
 
@@ -34,7 +34,7 @@ namespace SMK_Restaurant_API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetByMenu(int menuId)
         {
-            var reviews = await _context.Reviews
+            var reviews = await _context.Review
                 .Where(r => r.MenuID == menuId)
                 .ToListAsync();
 
@@ -44,18 +44,19 @@ namespace SMK_Restaurant_API.Controllers
         // ✅ POST: Tambah review
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
-        public async Task<IActionResult> Add([FromBody] ReviewRequest request)
+        public async Task<IActionResult> Add([FromForm] ReviewRequest request)
         {
+
             if (request.Rating < 1 || request.Rating > 5)
                 return BadRequest("Rating must be between 1 and 5.");
 
-            var order = await _context.Headerorders
+            var order = await _context.Headerorder
                 .FirstOrDefaultAsync(o => o.OrderID == request.OrderID);
 
             if (order == null)
                 return NotFound("Order not found.");
 
-            var menu = await _context.Msmenus
+            var menu = await _context.Msmenu
                 .FirstOrDefaultAsync(m => m.MenuID == request.MenuID);
 
             if (menu == null)
@@ -89,7 +90,7 @@ namespace SMK_Restaurant_API.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            _context.Reviews.Add(review);
+            _context.Review.Add(review);
             await _context.SaveChangesAsync();
 
             return Ok(review);
@@ -97,9 +98,9 @@ namespace SMK_Restaurant_API.Controllers
 
         // ✅ PUT: Edit review
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ReviewRequest request)
+        public async Task<IActionResult> Update(int id, [FromForm] ReviewRequest request)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Review.FindAsync(id);
             if (review == null) return NotFound();
 
             string photoPath = review.Photo;
@@ -132,10 +133,10 @@ namespace SMK_Restaurant_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Review.FindAsync(id);
             if (review == null) return NotFound();
 
-            _context.Reviews.Remove(review);
+            _context.Review.Remove(review);
             await _context.SaveChangesAsync();
             return Ok("Review deleted.");
         }

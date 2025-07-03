@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SMK_Restaurant_API.Data;
 using SMK_Restaurant_API.Services;
 
@@ -20,10 +21,13 @@ namespace SMK_Restaurant_API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = _context.Msmembers
-                .FirstOrDefault(u => u.Email == request.Email && u.Password == request.Password);
+            if (!ModelState.IsValid)
+                return BadRequest("Email and Password are required.");
+
+            var user = await _context.Msmember
+                .FirstOrDefaultAsync(u => u.Email == request.Email && u.Password == request.Password);
 
             if (user == null) return Unauthorized("Invalid credentials");
 
