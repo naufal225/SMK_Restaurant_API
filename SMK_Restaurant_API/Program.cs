@@ -42,7 +42,7 @@ builder.Services.Configure<FormOptions>(o =>
     o.MultipartBodyLengthLimit = 10_000_000; // 10 MB
 });
 
-
+builder.WebHost.UseUrls("http://localhost:7045");
 
 var app = builder.Build();
 
