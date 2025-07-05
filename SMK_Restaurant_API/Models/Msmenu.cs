@@ -18,5 +18,7 @@ namespace SMK_Restaurant_API.Models
 
         [Required]
         public string Photo { get; set; } = string.Empty;
+
+        public string PhotoUniqueName { get; set; } = string.Empty;
     }
 }

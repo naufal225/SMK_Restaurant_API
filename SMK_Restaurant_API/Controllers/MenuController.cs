@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SMK_Restaurant_API.Data;
+using SMK_Restaurant_API.Dto;
+using SMK_Restaurant_API.Models;
+using System;
 
 namespace SMK_Restaurant_API.Controllers
 {
@@ -11,10 +15,12 @@ namespace SMK_Restaurant_API.Controllers
     public class MenuController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public MenuController(AppDbContext context)
+        public MenuController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // ✅ GET: Semua menu
@@ -23,7 +29,10 @@ namespace SMK_Restaurant_API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var menus = await _context.Msmenu.ToListAsync();
-            return Ok(menus);
+
+            var menusDto = _mapper.Map<List<MenuDto>>(menus);
+
+            return Ok(menusDto);
         }
 
         [HttpGet("{id:int}")]
@@ -31,7 +40,14 @@ namespace SMK_Restaurant_API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var menu = await _context.Msmenu.FindAsync(id);
-            return Ok(menu);
+
+            if(menu == null)
+            {
+                return NotFound();
+            }
+
+            var menuDto = _mapper.Map<MenuDto>(menu);
+            return Ok(menuDto);
         }
     }
 }

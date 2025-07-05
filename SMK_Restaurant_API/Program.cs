@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SMK_Restaurant_API.Data;
+using SMK_Restaurant_API.Profiles;
 using SMK_Restaurant_API.Services;
 using System.Text;
 
@@ -41,6 +42,8 @@ builder.Services.Configure<FormOptions>(o =>
 {
     o.MultipartBodyLengthLimit = 10_000_000; // 10 MB
 });
+
+builder.Services.AddAutoMapper(typeof(MenuProfile));
 
 builder.WebHost.UseUrls("http://localhost:7045");
 
