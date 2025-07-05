@@ -16,6 +16,17 @@ namespace SMK_Restaurant_API.Data
         public DbSet<PartyPackage> PartyPackage { get; set; }
         public DbSet<PartyPackageDetail> PartyPackageDetail { get; set; }
         public DbSet<OrderPackage> OrderPackage { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Member)
+                .WithMany(m => m.Reviews)
+                .HasForeignKey(r => r.MemberID)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
     }
 
 }

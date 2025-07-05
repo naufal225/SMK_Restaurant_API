@@ -2,7 +2,6 @@
 {
     public class ReviewRequest
     {
-        public string OrderID { get; set; } = string.Empty;
         public int MenuID { get; set; }
         public int Rating { get; set; }
         public string ReviewText { get; set; } = string.Empty;

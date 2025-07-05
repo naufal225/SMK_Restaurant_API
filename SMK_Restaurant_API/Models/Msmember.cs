@@ -21,6 +21,9 @@ namespace SMK_Restaurant_API.Models
 
         [Required]
         public string Password { get; set; } = string.Empty;
+
+
+        public ICollection<Review>? Reviews { get;set; }
     }
 
 }

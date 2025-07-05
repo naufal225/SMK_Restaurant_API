@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace SMK_Restaurant_API.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ReviewController(AppDbContext context)
+        public ReviewController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // ✅ GET: Semua review
@@ -25,8 +28,11 @@ namespace SMK_Restaurant_API.Controllers
         [AllowAnonymous] // Boleh diakses tanpa login
         public async Task<IActionResult> GetAll()
         {
-            var reviews = await _context.Review.ToListAsync();
-            return Ok(reviews);
+            var reviews = await _context.Review.Include(r => r.Member).ToListAsync();
+
+            var reviewsDto = _mapper.Map<List<ReviewDto>>(reviews);
+
+            return Ok(reviewsDto);
         }
 
         // ✅ GET: Review berdasarkan Menu
@@ -36,9 +42,12 @@ namespace SMK_Restaurant_API.Controllers
         {
             var reviews = await _context.Review
                 .Where(r => r.MenuID == menuId)
+                .Include(r => r.Member)
                 .ToListAsync();
 
-            return Ok(reviews);
+            var reviewDto = _mapper.Map<List<ReviewDto>>(reviews);
+
+            return Ok(reviewDto);
         }
 
         // ✅ POST: Tambah review
@@ -49,12 +58,6 @@ namespace SMK_Restaurant_API.Controllers
 
             if (request.Rating < 1 || request.Rating > 5)
                 return BadRequest("Rating must be between 1 and 5.");
-
-            var order = await _context.Headerorder
-                .FirstOrDefaultAsync(o => o.OrderID == request.OrderID);
-
-            if (order == null)
-                return NotFound("Order not found.");
 
             var menu = await _context.Msmenu
                 .FirstOrDefaultAsync(m => m.MenuID == request.MenuID);
@@ -82,7 +85,6 @@ namespace SMK_Restaurant_API.Controllers
 
             var review = new Review
             {
-                OrderID = request.OrderID,
                 MenuID = request.MenuID,
                 Rating = request.Rating,
                 ReviewText = request.ReviewText,

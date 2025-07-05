@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SMK_Restaurant_API.Models
 {
@@ -8,10 +9,11 @@ namespace SMK_Restaurant_API.Models
         public int ReviewID { get; set; }
 
         [Required]
-        public string OrderID { get; set; } = string.Empty;
+        [ForeignKey("Member")]
+        public int MenuID { get; set; }
 
         [Required]
-        public int MenuID { get; set; }
+        public string MemberID { get; set; } = string.Empty;
 
         [Required]
         public int Rating { get; set; }
@@ -21,6 +23,9 @@ namespace SMK_Restaurant_API.Models
         public string Photo { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+
+        public Msmember? Member { get; set; } 
     }
 
 }
