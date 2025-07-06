@@ -13,5 +13,7 @@ namespace SMK_Restaurant_API.Dto
         public string PhotoUrl { get; set; } = string.Empty;
 
         public double? Rating { get; set; }
+        public bool IsReviewed { get; set; }
+        public bool IsOrdered { get; set; }
     }
 }

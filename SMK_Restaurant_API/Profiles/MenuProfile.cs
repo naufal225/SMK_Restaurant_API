@@ -10,7 +10,11 @@ namespace SMK_Restaurant_API.Profiles
         {
             CreateMap<Msmenu, MenuDto>()
                 .ForMember(dest => dest.PhotoUrl,
-                    opt => opt.MapFrom(src => $"images/{src.PhotoUniqueName}"));
+                    opt => opt.MapFrom(src => $"images/{src.PhotoUniqueName}"))
+                .ForMember(dest => dest.IsReviewed,
+                    opt => opt.Ignore())
+                 .ForMember(dest => dest.IsOrdered,
+                    opt => opt.Ignore());
         }
 
     }

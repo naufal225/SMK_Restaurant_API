@@ -11,6 +11,8 @@ namespace SMK_Restaurant_API.Data
         public DbSet<Msmenu> Msmenu { get; set; }
 
         public DbSet<Headerorder> Headerorder { get; set; }
+        public DbSet<DetailOrder> DetailOrder { get; set; }
+
 
         public DbSet<Review> Review { get; set; }
         public DbSet<PartyPackage> PartyPackage { get; set; }

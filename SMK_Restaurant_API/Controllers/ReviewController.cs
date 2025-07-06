@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using SMK_Restaurant_API.Data;
 using SMK_Restaurant_API.Dto;
 using SMK_Restaurant_API.Models;
+using System.Security.Claims;
 
 namespace SMK_Restaurant_API.Controllers
 {
@@ -56,6 +57,12 @@ namespace SMK_Restaurant_API.Controllers
         [RequestSizeLimit(10_000_000)]
         public async Task<IActionResult> Add([FromForm] ReviewRequest request)
         {
+            var member = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if(member == null)
+            {
+                return Unauthorized();
+            }
 
             if (request.Rating < 1 || request.Rating > 5)
                 return BadRequest("Rating must be between 1 and 5.");
@@ -98,9 +105,10 @@ namespace SMK_Restaurant_API.Controllers
 
             var review = new Review
             {
+                MemberID = member,
                 MenuID = request.MenuID,
                 Rating = request.Rating,
-                ReviewText = request.ReviewText,
+                ReviewText = request.ReviewText ?? "",
                 Photo = photoPath,
                 CreatedAt = DateTime.Now,
             };
@@ -160,7 +168,7 @@ namespace SMK_Restaurant_API.Controllers
             menu.Rating = newRating;
 
             review.Rating = request.Rating;
-            review.ReviewText = request.ReviewText;
+            review.ReviewText = request.ReviewText ?? "";
             review.Photo = photoPath;
 
             await _context.SaveChangesAsync();
