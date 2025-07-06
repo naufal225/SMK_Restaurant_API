@@ -7,6 +7,8 @@ namespace SMK_Restaurant_API.Dto
         public string ReviewerName { get; set; } = string.Empty;
 
         public int MenuID { get; set; }
+        public int ReviewID { get; set; }
+
 
         public int Rating { get; set; }
 

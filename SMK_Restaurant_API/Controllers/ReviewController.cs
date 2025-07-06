@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -83,16 +84,31 @@ namespace SMK_Restaurant_API.Controllers
                 photoPath = "/images/" + fileName;
             }
 
+            var countReviewMenu = await _context.Review.CountAsync(r => r.MenuID == request.MenuID);
+            double newRating;
+
+            if (countReviewMenu == 0)
+            {
+                newRating = request.Rating; // pertama kali direview
+            }
+            else
+            {
+                newRating = (((menu.Rating ?? 0) * countReviewMenu) + request.Rating) / (countReviewMenu + 1);
+            }
+
             var review = new Review
             {
                 MenuID = request.MenuID,
                 Rating = request.Rating,
                 ReviewText = request.ReviewText,
                 Photo = photoPath,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
             };
 
             _context.Review.Add(review);
+
+            menu.Rating = newRating;
+
             await _context.SaveChangesAsync();
 
             return Ok(review);
@@ -106,6 +122,12 @@ namespace SMK_Restaurant_API.Controllers
             if (review == null) return NotFound();
 
             string photoPath = review.Photo;
+
+            var menu = await _context.Msmenu
+              .FirstOrDefaultAsync(m => m.MenuID == request.MenuID);
+
+            if (menu == null)
+                return NotFound("Menu not found.");
 
             if (request.Photo != null)
             {
@@ -123,6 +145,20 @@ namespace SMK_Restaurant_API.Controllers
                 photoPath = "/images/" + fileName;
             }
 
+            var countReviewMenu = await _context.Review.CountAsync(r => r.MenuID == request.MenuID);
+            double newRating;
+
+            if (countReviewMenu == 0)
+            {
+                newRating = request.Rating; // pertama kali direview
+            }
+            else
+            {
+                newRating = (((menu.Rating ?? 0) * countReviewMenu) + request.Rating) / (countReviewMenu + 1);
+            }
+
+            menu.Rating = newRating;
+
             review.Rating = request.Rating;
             review.ReviewText = request.ReviewText;
             review.Photo = photoPath;
@@ -137,6 +173,24 @@ namespace SMK_Restaurant_API.Controllers
         {
             var review = await _context.Review.FindAsync(id);
             if (review == null) return NotFound();
+
+            var menu = await _context.Msmenu
+            .FirstOrDefaultAsync(m => m.MenuID == review.MenuID);
+
+            if (menu == null)
+                return NotFound("Menu not found.");
+
+
+            var countReviewMenu = await _context.Review.CountAsync(r => r.MenuID == review.MenuID);
+            double newRating;
+            if (countReviewMenu <= 1)
+            {
+                newRating = 0;
+            } else {
+                newRating = (((menu.Rating ?? 0) * countReviewMenu)) / (countReviewMenu - 1);
+            }
+
+            menu.Rating = newRating;
 
             _context.Review.Remove(review);
             await _context.SaveChangesAsync();

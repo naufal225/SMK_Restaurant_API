@@ -20,5 +20,8 @@ namespace SMK_Restaurant_API.Models
         public string Photo { get; set; } = string.Empty;
 
         public string PhotoUniqueName { get; set; } = string.Empty;
+
+        public double? Rating { get; set; }
+
     }
 }
